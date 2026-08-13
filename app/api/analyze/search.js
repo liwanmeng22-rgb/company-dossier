@@ -1,21 +1,29 @@
 const TAVILY_ENDPOINT = "https://api.tavily.com/search";
 
-async function tavilySearch(apiKey, query, { topic = "general", maxResults = 5 } = {}) {
-  const res = await fetch(TAVILY_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      query,
-      search_depth: "advanced",
-      topic,
-      max_results: maxResults,
-      include_answer: false,
-      include_raw_content: false,
-    }),
-  });
+async function tavilySearch(apiKey, query, { topic = "general", maxResults = 4 } = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 7000);
+  let res;
+  try {
+    res = await fetch(TAVILY_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        query,
+        search_depth: "basic",
+        topic,
+        max_results: maxResults,
+        include_answer: false,
+        include_raw_content: false,
+      }),
+    });
+  } finally {
+    clearTimeout(timer);
+  }
 
   if (!res.ok) {
     throw new Error(`Tavily请求失败（${res.status}）：${await res.text()}`);
@@ -29,10 +37,10 @@ function formatResults(label, data) {
   if (!results.length) return `【${label}】未检索到相关结果。\n`;
 
   const lines = results
-    .slice(0, 5)
+    .slice(0, 4)
     .map(
       (r, i) =>
-        `${i + 1}. ${r.title}\n   来源：${r.url}\n   摘要：${(r.content || "").slice(0, 300)}`
+        `${i + 1}. ${r.title}\n   来源：${r.url}\n   摘要：${(r.content || "").slice(0, 220)}`
     )
     .join("\n");
 
@@ -55,9 +63,8 @@ export async function gatherSearchContext(companyName) {
   }
 
   const queries = [
-    { label: "最新财报与新闻动态", query: `${companyName} 最新 财报 融资 新闻`, topic: "news" },
+    { label: "最新财报与新闻动态", query: `${companyName} 最新 财报 新闻 风险`, topic: "news" },
     { label: "行业与竞争格局", query: `${companyName} 行业 竞争对手 市场份额`, topic: "general" },
-    { label: "风险与负面信息", query: `${companyName} 风险 诉讼 债务 减产`, topic: "news" },
   ];
 
   const settled = await Promise.allSettled(

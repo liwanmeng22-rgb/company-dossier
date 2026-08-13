@@ -40,7 +40,20 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ companyName }),
       });
-      const data = await res.json();
+      const raw = await res.text();
+      let data;
+      try {
+        data = raw ? JSON.parse(raw) : null;
+      } catch {
+        data = null;
+      }
+      if (!data) {
+        throw new Error(
+          res.status === 504
+            ? "分析时间过长，请稍后重试"
+            : `服务器返回异常（${res.status}），请稍后重试`
+        );
+      }
       if (!res.ok) {
         setError(data.error || "生成失败，请重试");
       } else {

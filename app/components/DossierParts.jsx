@@ -1,5 +1,5 @@
 const CONFIDENCE_LABEL = {
-  disclosed: "已披露",
+  disclosed: "公开资料线索",
   estimated: "行业估算",
   inferred: "AI推测",
 };
@@ -7,7 +7,7 @@ const CONFIDENCE_LABEL = {
 export function ConfidenceBadge({ level }) {
   if (!level || !CONFIDENCE_LABEL[level]) return null;
   return (
-    <span className={`badge ${level}`}>
+    <span className={`badge ${level}`} title="模型判断的证据类别，不代表人工核实；请对照报告来源阅读。">
       <span className="dot" />
       {CONFIDENCE_LABEL[level]}
     </span>

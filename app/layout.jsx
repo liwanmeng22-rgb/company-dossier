@@ -14,8 +14,8 @@ const sans = IBM_Plex_Sans({
 });
 
 export const metadata = {
-  title: "公司拆解仪表盘",
-  description: "输入公司名称，生成带置信度标记的结构化拆解档案",
+  title: "Company Dossier · 公司研究档案",
+  description: "快速了解一家公司的产品、商业模式、竞争力、风险与国内外业务，结合公开来源形成结构化研究档案。",
 };
 
 export default function RootLayout({ children }) {

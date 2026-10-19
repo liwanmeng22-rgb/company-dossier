@@ -1,0 +1,8 @@
+# Exclude misplaced upload copies; keep /app.
+/api/
+/components/
+/lib/
+/globals.css
+/layout.jsx
+/page.jsx
+*副本*

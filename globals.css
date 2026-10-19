@@ -1,0 +1,66 @@
+:root {
+  --bg: #0c121f;
+  --surface: #141c2c;
+  --surface-raised: #1a2436;
+  --hairline: #2a3548;
+  --text: #e9edf5;
+  --text-muted: #8993a8;
+  --text-faint: #5c667a;
+  --copper: #c98a3b;
+  --copper-soft: rgba(201, 138, 59, 0.14);
+  --verified: #4fd1a5;
+  --verified-soft: rgba(79, 209, 165, 0.12);
+  --estimated: #e8b34c;
+  --estimated-soft: rgba(232, 179, 76, 0.12);
+  --inferred: #8993a8;
+  --inferred-soft: rgba(137, 147, 168, 0.1);
+  --danger: #e8674c;
+  --danger-soft: rgba(232, 103, 76, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans), -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-image: radial-gradient(
+      circle at 12% 8%,
+      rgba(201, 138, 59, 0.06),
+      transparent 40%
+    ),
+    radial-gradient(circle at 88% 92%, rgba(79, 209, 165, 0.05), transparent 45%);
+  background-attachment: fixed;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 600;
+  margin: 0;
+}
+
+.mono {
+  font-family: var(--font-mono), monospace;
+}
+
+::selection {
+  background: var(--copper-soft);
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}

@@ -1,8 +1,17 @@
-import { schema } from './validate.js';
+import { schema, REGION_FIELDS } from './validate.js';
 import { researchSchema } from './research.js';
 
 const object = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 const unknown = '[待验证] 本次未取得该项资料';
+
+// Detect omitted regional sections before placeholder padding hides the omission.
+export function missingRegions(report) {
+  return ['domestic', 'international'].filter(region => !REGION_FIELDS.some(key => {
+    const value = report?.business_analysis?.[region]?.[key];
+    return typeof value === 'string' && value.replace(/\[[^\]]+\]/g, '').trim().length > 3 &&
+      !/^(?:\[待验证\]\s*)?(本次未取得该项资料|暂无足够公开资料|待验证|未知|未披露|string)\s*$/.test(value.trim());
+  }));
+}
 
 // Repair missing data, not arbitrary structural errors. Wrong objects/arrays
 // remain wrong and are rejected by the existing validators.

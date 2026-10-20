@@ -24,7 +24,7 @@ test("successful search deduplicates sources and rejects unsafe URL schemes", as
   assert.equal(report.sources[0].content, '产品与客户公开信息');
   assert.match(report.contextText, /产品与客户公开信息/);
   assert.ok(!report.contextText.includes("javascript:"));
-  assert.deepEqual(topics.sort(), ["general", "general", "general", "general", "general", "news"]);
+  assert.deepEqual(topics.sort(), ["general", "general", "general", "general", "general", "general", "news"]);
 });
 
 test("empty searches provide no context and no claim of retrieved evidence", async () => {

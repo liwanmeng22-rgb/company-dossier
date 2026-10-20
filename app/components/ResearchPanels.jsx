@@ -1,4 +1,5 @@
 const REGION_LABELS = { footprint: "市场布局", products: "主要产品", customers: "客户与需求", channels: "销售与渠道", growth_drivers: "增长动力", constraints: "经营挑战" };
+const hasContent = value => typeof value === 'string' && value.trim() && !/^(?:\[待验证\]\s*)?(本次未取得该项资料|暂无足够公开资料|待验证|未知|未披露|string)\s*$/.test(value.trim());
 
 export function EvidenceText({ value }) {
   const raw = typeof value === "string" && value.trim() ? value : "[待验证] 暂无足够公开资料";
@@ -27,11 +28,16 @@ export function BusinessAnalysis({ data, homeMarket }) {
   return <>
     <div className="card business-intro"><div><span className="panel-eyebrow">BUSINESS FOOTPRINT</span><h3>同一家公司，两种市场视角</h3><p>国内指总部所在国的本土市场：{homeMarket || "待确认"}。缺少海外资料不等于没有海外业务。</p></div><div className="market-key"><span><i />本土市场</span><span><i />国际市场</span></div></div>
     <div className="region-grid">
-      {[{key:"domestic", title:"国内业务", label:"HOME MARKET", code:"01"}, {key:"international", title:"海外业务", label:"INTERNATIONAL", code:"02"}].map(region => <article className={`card region-card ${region.key}`} id={region.key === "domestic" ? "国内业务" : "海外业务"} key={region.key}>
+      {[{key:"domestic", title:"国内业务", label:"HOME MARKET", code:"01"}, {key:"international", title:"海外业务", label:"INTERNATIONAL", code:"02"}].map(region => {
+        const values = data?.[region.key] || {};
+        const available = Object.entries(REGION_LABELS).filter(([key]) => hasContent(values[key]));
+        const missing = Object.entries(REGION_LABELS).filter(([key]) => !hasContent(values[key])).map(([, label]) => label);
+        return <article className={`card region-card ${region.key}`} id={region.key === "domestic" ? "国内业务" : "海外业务"} key={region.key}>
         <header className="region-header"><div><span className="panel-eyebrow">{region.label}</span><h3>{region.title}</h3></div><span className="region-symbol" aria-hidden="true">{region.code}</span></header>
-        <div className="region-footprint"><EvidenceText value={data?.[region.key]?.footprint} /></div>
-        <dl className="region-details">{Object.entries(REGION_LABELS).filter(([key])=>key !== "footprint").map(([key,label])=><div key={key}><dt>{label}</dt><dd><EvidenceText value={data?.[region.key]?.[key]} /></dd></div>)}</dl>
-      </article>)}
+        {hasContent(values.footprint) && <div className="region-footprint"><EvidenceText value={values.footprint} /></div>}
+        {available.length ? <dl className="region-details">{available.filter(([key])=>key !== "footprint").map(([key,label])=><div key={key}><dt>{label}</dt><dd><EvidenceText value={values[key]} /></dd></div>)}</dl> : <div className="region-empty"><strong>本次报告未能整理出{region.title}信息</strong><p>已有搜索结果不代表这部分已生成完整内容，也不能据此判断公司没有相关业务。可重新生成，或查看下方来源与核查。</p></div>}
+        {missing.length > 0 && available.length > 0 && <details className="region-gaps"><summary>尚缺 {missing.length} 项资料</summary><p>{missing.join('、')}。本次未取得可展示内容。</p></details>}
+      </article>;})}
     </div>
     <div className="card value-chain"><span className="panel-eyebrow">VALUE CHAIN</span><h3>它在产业链中，创造什么价值？</h3><EvidenceText value={data?.value_chain} /></div>
     <div className="card research-gaps"><span className="panel-eyebrow">OPEN QUESTIONS</span><h3>继续了解前，值得查清的事</h3><div className="question-grid">{(data?.research_questions || []).map((item,index)=><div key={index}><span className="question-index">{String(index+1).padStart(2,"0")}</span><EvidenceText value={item} /></div>)}</div></div>

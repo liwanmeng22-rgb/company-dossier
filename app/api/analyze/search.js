@@ -42,7 +42,8 @@ export async function gatherSearchContext(companyName, options = {}) {
     { label: "可比公司", query: `${companyName} 竞争对手 产品 客户 对比`, topic: "general" },
     { label: "最新财报与新闻动态", query: `${companyName} 最新 财报 新闻 风险`, topic: "news" },
     { label: "公司主体、产品与商业模式", query: `${companyName} 官网 主营产品 客户 商业模式 收入`, topic: "general" },
-    { label: "本土与海外业务", query: `${companyName} 年报 国内 本土 海外 业务 地区 渠道 international markets`, topic: "general" },
+    { label: "本土业务", query: `${companyName} 官网 总部 本土 国内市场 产品 客户 销售渠道`, topic: "general" },
+    { label: "海外业务", query: `${companyName} 官网 年报 海外 出口 国际市场 子公司 international markets distribution`, topic: "general" },
   ];
   const settled = await Promise.allSettled(queries.map(q =>
     tavilySearch(apiKey.trim(), q.query, q.topic, options.fetchImpl)));

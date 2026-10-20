@@ -164,7 +164,7 @@ export default function Home() {
               {loading ? "生成中…" : "生成报告"}
             </button>
           </div>
-          {report && <nav className="mobile-index" aria-label="移动阅读索引">{NAV.map(n=><a key={n.id} href={`#${n.title}`} aria-current={activeSection === n.title ? "location" : undefined}>{n.title}</a>)}</nav>}
+          {report && <details className="mobile-index"><summary>阅读目录 · {activeSection}</summary><nav aria-label="移动阅读索引">{NAV.map(n=><a key={n.id} href={`#${n.title}`} onClick={e=>{e.currentTarget.closest('details').open=false;}} aria-current={activeSection === n.title ? "location" : undefined}><span>{n.id}</span>{n.title}</a>)}<a href="#国内业务">国内业务</a><a href="#海外业务">海外业务</a></nav></details>}
           {report && (
             <div className="as-of">
               {report.meta?.as_of_note}
